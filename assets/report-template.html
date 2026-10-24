@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX X-Ray 审查报告 · {{产品名}}</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #1a1d24; --ink: #e8eaf0; --dim: #9aa0ae;
+    --accent: #4f8cff; --critical: #ff5252; --major: #ff9800;
+    --minor: #ffd54f; --info: #4fc3f7; --good: #66bb6a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.7; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 28px; letter-spacing: 1px; }
+  h2 { font-size: 20px; margin: 48px 0 16px; padding-left: 12px; border-left: 4px solid var(--accent); }
+  h3 { font-size: 16px; margin-bottom: 8px; }
+  .sub { color: var(--dim); font-size: 14px; margin-top: 6px; }
+  .card { background: var(--card); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .kv { background: var(--card); border-radius: 10px; padding: 14px 16px; }
+  .kv b { display: block; font-size: 12px; color: var(--dim); margin-bottom: 4px; font-weight: 600; }
+  .thesis { background: linear-gradient(135deg, #1e2433, #161a22); border: 1px solid #2a3245; border-radius: 12px; padding: 24px 28px; font-size: 17px; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 6px; padding: 2px 10px; margin-right: 8px; vertical-align: 2px; }
+  .b-critical { background: rgba(255,82,82,.15); color: var(--critical); border: 1px solid var(--critical); }
+  .b-major { background: rgba(255,152,0,.15); color: var(--major); border: 1px solid var(--major); }
+  .b-minor { background: rgba(255,213,79,.15); color: var(--minor); border: 1px solid var(--minor); }
+  .b-info { background: rgba(79,195,247,.15); color: var(--info); border: 1px solid var(--info); }
+  .tag { display: inline-block; font-size: 12px; color: var(--accent); background: rgba(79,140,255,.12); border-radius: 4px; padding: 1px 8px; margin: 2px 4px 2px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #262b36; }
+  th { color: var(--dim); font-size: 12px; }
+  .finding h3 { margin-top: 4px; }
+  .finding p { font-size: 14px; margin: 6px 0; }
+  .finding .label { color: var(--dim); font-weight: 600; font-size: 13px; }
+  .flow { font-family: "SF Mono", Consolas, monospace; font-size: 13px; background: var(--card); border-radius: 10px; padding: 16px 20px; white-space: pre-wrap; }
+  .flow .hit { color: var(--critical); font-weight: 700; }
+  .radar-wrap { display: flex; justify-content: center; padding: 8px 0; }
+  .score-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 14px; }
+  .score-row .name { width: 120px; flex-shrink: 0; }
+  .bar { flex: 1; height: 8px; background: #262b36; border-radius: 4px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+  .bar i.low { background: var(--critical); } .bar i.mid { background: var(--major); }
+  .num { width: 28px; text-align: right; font-weight: 700; }
+  ul { padding-left: 20px; font-size: 14px; }
+  li { margin: 4px 0; }
+  footer { margin-top: 64px; color: var(--dim); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 1. 封面与上下文 ===== -->
+  <header>
+    <h1>🔍 UX X-Ray 审查报告</h1>
+    <p class="sub">{{产品名}} · 审查日期 {{YYYY-MM-DD}} · 审查人 {{名称}}</p>
+  </header>
+
+  <h2>审查结论</h2>
+  <div class="thesis">
+    <!-- 一句话中心论断：最根本的问题是什么。例：产品定位是效率工具，但核心任务流中存在 X 处阻断性问题，本质上是「入口架构违反用户心智」而非视觉问题。 -->
+    {{中心论断：1-2 句话}}
+  </div>
+
+  <h2>审查上下文</h2>
+  <div class="grid">
+    <div class="kv"><b>目标用户</b>{{用户画像}}</div>
+    <div class="kv"><b>核心任务流</b>{{任务描述}}</div>
+    <div class="kv"><b>产品类型</b>{{工具/内容/交易/社交}}</div>
+    <div class="kv"><b>输入材料</b>{{URL/截图/录屏/PRD}}</div>
+  </div>
+  <div class="card">
+    <h3>假设清单（未经用户确认的判断）</h3>
+    <ul>
+      <li>{{假设1：内容及验证方式}}</li>
+      <!-- 无假设则删除本卡片 -->
+    </ul>
+  </div>
+
+  <!-- ===== 2. 维度雷达与得分 ===== -->
+  <h2>10 维体检</h2>
+  <div class="card">
+    <div class="radar-wrap">
+      <!-- 雷达图：10 轴，中心 (200,200)，外圈半径 160，从正上方顺时针依次：
+           有用 → 可用 → 可找到 → 可信赖 → 可达 → 令人愉悦 → 有价值 → 一致 → 高效 → 容错
+           顶点计算：axis_i 角度 = -90° + 36°×i，r = 得分/5×160，
+           顶点 = (200 + r·cosθ, 200 + r·sinθ)。按实际评分重算 polygon points。 -->
+      <svg width="400" height="400" viewBox="0 0 400 400">
+        <!-- 网格环（r=40/80/120/160） -->
+        <g stroke="#2a2f3a" fill="none">
+          <polygon points="200,160 223.5,167.6 238,187.6 238,212.4 223.5,232.4 200,240 176.5,232.4 162,212.4 162,187.6 176.5,167.6"/>
+          <polygon points="200,120 247,135.2 276.1,175.2 276.1,224.8 247,264.8 200,280 153,264.8 123.9,224.8 123.9,175.2 153,135.2"/>
+          <polygon points="200,80 270.5,102.9 314.1,162.9 314.1,237.1 270.5,297.1 200,320 129.5,297.1 85.9,237.1 85.9,162.9 129.5,102.9"/>
+          <polygon points="200,40 294,70.6 352.2,150.6 352.2,249.4 294,329.4 200,360 106,329.4 47.8,249.4 47.8,150.6 106,70.6"/>
+        </g>
+        <!-- 轴线 -->
+        <g stroke="#333a48">
+          <line x1="200" y1="200" x2="200" y2="40"/>
+          <line x1="200" y1="200" x2="294" y2="70.6"/>
+          <line x1="200" y1="200" x2="352.2" y2="150.6"/>
+          <line x1="200" y1="200" x2="352.2" y2="249.4"/>
+          <line x1="200" y1="200" x2="294" y2="329.4"/>
+          <line x1="200" y1="200" x2="200" y2="360"/>
+          <line x1="200" y1="200" x2="106" y2="329.4"/>
+          <line x1="200" y1="200" x2="47.8" y2="249.4"/>
+          <line x1="200" y1="200" x2="47.8" y2="150.6"/>
+          <line x1="200" y1="200" x2="106" y2="70.6"/>
+        </g>
+        <!-- 轴标签 -->
+        <g font-size="12" fill="#9aa0ae" text-anchor="middle">
+          <text x="200" y="24">有用</text>
+          <text x="306" y="58">可用</text>
+          <text x="374" y="148">可找到</text>
+          <text x="374" y="260">可信赖</text>
+          <text x="306" y="352">可达</text>
+          <text x="200" y="388">令人愉悦</text>
+          <text x="94" y="352">有价值</text>
+          <text x="26" y="260">一致</text>
+          <text x="26" y="148">高效</text>
+          <text x="94" y="58">容错</text>
+        </g>
+        <!-- 得分多边形（示例：有用4 可用3 可找到2 其余4，按实际评分重算） -->
+        <polygon fill="rgba(79,140,255,.25)" stroke="#4f8cff" stroke-width="2"
+          points="200,72 256.4,122.3 260.9,180.2 321.7,239.6 275.2,303.6 200,328 124.8,303.6 78.3,239.6 78.3,160.4 124.8,96.4"/>
+      </svg>
+    </div>
+    <!-- 得分条（直观备选，雷达图出错时以此为准） -->
+    <div>
+      <!-- 每个维度一行；i 宽度 = 得分/5×100%；low≤2 mid=3 -->
+      <div class="score-row"><span class="name">有用</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">可用</span><div class="bar"><i class="mid" style="width:60%"></i></div><span class="num">3.0</span></div>
+      <div class="score-row"><span class="name">可找到</span><div class="bar"><i class="low" style="width:40%"></i></div><span class="num">2.0</span></div>
+      <div class="score-row"><span class="name">可信赖</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">可达</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">令人愉悦</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">有价值</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">一致</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">高效</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+      <div class="score-row"><span class="name">容错</span><div class="bar"><i style="width:80%"></i></div><span class="num">4.0</span></div>
+    </div>
+  </div>
+
+  <!-- ===== 3. 任务流地图 ===== -->
+  <h2>任务流地图</h2>
+  <div class="flow">步骤1 打开首页
+  [加载 1.2s]
+  → 步骤2 {{页面名}} <span class="hit">⚠ 问题#1 #3</span>
+  [{{选择数}} 个选择]
+  → 步骤3 {{页面名}}
+  → 完成</div>
+
+  <!-- ===== 4. 问题清单（按严重度排序） ===== -->
+  <h2>问题清单</h2>
+
+  <div class="card finding">
+    <span class="badge b-critical">致命</span>
+    <span class="tag">容错</span><span class="tag">可信赖</span>
+    <h3>{{问题标题}}</h3>
+    <p><span class="label">位置：</span>{{环节 / 页面 / 元素}}</p>
+    <p><span class="label">证据：</span>{{截图描述 / 操作路径 / 计时数据}}</p>
+    <p><span class="label">阻碍：</span>{{用户在此卡住/走偏/放弃的具体表现}}</p>
+    <p><span class="label">影响：</span>{{对核心任务与指标的影响}}</p>
+    <p><span class="label">建议：</span>{{可执行的修复方案}}</p>
+    <p><span class="label">验证：</span>{{对应指标：完成率 / 耗时 / 错误率 / 反馈}}</p>
+  </div>
+
+  <div class="card finding">
+    <span class="badge b-major">严重</span>
+    <span class="tag">可找到</span>
+    <h3>{{问题标题}}</h3>
+    <p><span class="label">位置：</span></p>
+    <p><span class="label">证据：</span></p>
+    <p><span class="label">阻碍：</span></p>
+    <p><span class="label">影响：</span></p>
+    <p><span class="label">建议：</span></p>
+    <p><span class="label">验证：</span></p>
+  </div>
+
+  <div class="card finding">
+    <span class="badge b-minor">次要</span>
+    <span class="tag">一致</span>
+    <h3>{{问题标题}}</h3>
+    <p><span class="label">位置：</span></p>
+    <p><span class="label">证据：</span></p>
+    <p><span class="label">阻碍：</span></p>
+    <p><span class="label">影响：</span></p>
+    <p><span class="label">建议：</span></p>
+    <p><span class="label">验证：</span></p>
+  </div>
+
+  <div class="card finding">
+    <span class="badge b-info">建议</span>
+    <span class="tag">高效</span>
+    <h3>{{问题标题}}</h3>
+    <p><span class="label">位置：</span></p>
+    <p><span class="label">证据：</span></p>
+    <p><span class="label">阻碍：</span></p>
+    <p><span class="label">影响：</span></p>
+    <p><span class="label">建议：</span></p>
+    <p><span class="label">验证：</span></p>
+  </div>
+
+  <!-- ===== 5. 优先级矩阵 ===== -->
+  <h2>优先级矩阵</h2>
+  <div class="card">
+    <table>
+      <tr><th>#</th><th>问题</th><th>修复建议</th><th>严重度</th><th>核心任务影响</th></tr>
+      <tr><td>1</td><td>{{}}</td><td>{{}}</td><td>🔴 致命</td><td>{{高/中/低 + 简述}}</td></tr>
+      <tr><td>2</td><td>{{}}</td><td>{{}}</td><td>🟠 严重</td><td>{{}}</td></tr>
+      <tr><td>3</td><td>{{}}</td><td>{{}}</td><td>🟡 次要</td><td>{{}}</td></tr>
+      <tr><td>4</td><td>{{}}</td><td>{{}}</td><td>🔵 建议</td><td>{{}}</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== 6. 验证闭环 ===== -->
+  <h2>验证闭环</h2>
+  <div class="card">
+    <p style="font-size:14px;margin-bottom:10px;">每项修复绑定可验证指标，优化前后对比，让评审有据可依：</p>
+    <table>
+      <tr><th>修复项</th><th>验证指标</th><th>基线</th><th>目标</th><th>采集方式</th></tr>
+      <tr><td>{{问题#1 修复}}</td><td>任务完成率</td><td>{{当前值}}</td><td>{{目标值}}</td><td>{{可用性测试/埋点}}</td></tr>
+      <tr><td>{{问题#2 修复}}</td><td>平均耗时</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    </table>
+    <ul style="margin-top:12px;">
+      <li>无基线时先建基线再优化；禁止"优化完即宣告成功"。</li>
+      <li>四维指标：任务完成率 · 平均耗时 · 错误率 · 用户反馈（NPS/访谈）。</li>
+    </ul>
+  </div>
+
+  <footer>Generated by yy-ux-xray · 10 维 UX 系统化诊断</footer>
+</div>
+</body>
+</html>
