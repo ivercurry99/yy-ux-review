@@ -1,4 +1,4 @@
-# yy-ux-xray · 产品体验 X 光机
+﻿# yy-ux-review · 产品体验系统化审查
 
 ![Hero](assets/hero.svg)
 
@@ -28,10 +28,10 @@
 方式二：命令行安装：
 
 ```bash
-npx skills add ivercurry99/yy-ux-xray
+npx skills add ivercurry99/yy-ux-review
 ```
 
-方式三：手动安装——把本仓库的 `SKILL.md`、`references/`、`assets/` 复制到项目的 `.trae/skills/yy-ux-xray/` 目录下。
+方式三：手动安装——把本仓库的 `SKILL.md`、`references/`、`assets/` 复制到项目的 `.trae/skills/yy-ux-review/` 目录下。
 
 ## 使用
 

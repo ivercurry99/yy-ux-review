@@ -1,9 +1,9 @@
 ---
-name: yy-ux-xray
-description: 给网站、App 等产品做系统化 UX 设计审查的 X 光机。Use when the user asks for UX review, UX audit, 体验诊断, 可用性评估, heuristic evaluation, usability review, design critique, or uploads 截图/录屏/链接/PRD and wants feedback on the experience. 沿真实用户任务流用 10 个维度逐项诊断，输出带评级的 HTML 审查报告。Do not use for 视觉美化、写代码实现功能或凭空设计新产品。
+name: yy-ux-review
+description: 给网站、App 等产品做系统化 UX 设计审查。Use when the user asks for UX review, UX audit, 体验诊断, 可用性评估, heuristic evaluation, usability review, design critique, or uploads 截图/录屏/链接/PRD and wants feedback on the experience. 沿真实用户任务流用 10 个维度逐项诊断，输出带评级的 HTML 审查报告。Do not use for 视觉美化、写代码实现功能或凭空设计新产品。
 ---
 
-# YY UX X-Ray — 产品体验 X 光机
+# YY UX Review — 产品体验系统化审查
 
 用 10 个相互关联的维度（有用、可用、可找到、可信赖、可达、令人愉悦、有价值、一致、高效、容错），沿真实用户任务流系统化诊断产品体验问题。
 
